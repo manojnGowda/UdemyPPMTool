@@ -2,15 +2,13 @@ package com.manoj.project.ppmtool.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 public class User implements UserDetails {
@@ -31,6 +29,18 @@ public class User implements UserDetails {
     private String confirmPassword;
     private Date created_At;
     private  Date updated_At;
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    private String role
+
+            ;
 
     @OneToMany(cascade = CascadeType.REFRESH,fetch = FetchType.LAZY,mappedBy = "user",orphanRemoval = true)
     private List<Project> projects = new ArrayList<>();
@@ -114,7 +124,9 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_"+this.role));
+        return authorities;
     }
 
     @Override
